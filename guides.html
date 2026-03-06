@@ -840,34 +840,60 @@
             </div>
         </div>
     </section>
-      <script>
-    document.getElementById('guideForm').addEventListener('submit', function(e) {
+  document.getElementById('guideForm').addEventListener('submit', function(e) {
     e.preventDefault();
+<script>
+    const form = this;
+    const messageDiv = document.getElementById('formMessage');
     
-    const formData = new FormData(this);
+    // Show loading state
+    form.querySelector('button').disabled = true;
+    form.querySelector('button').textContent = 'Submitting...';
+    
+    // Prepare data
     const data = {
-        name: formData.get('name'),
-        email: formData.get('email')
+        name: form.name.value.trim(),
+        email: form.email.value.trim()
     };
     
-    fetch('https://script.google.com/macros/s/AKfycbyAQ2KIZqstgHTjKBEuI_tXOIKMHRhmp9cf0No-SbzNxQ6FvTOWjV7x-bXkTlo3-6r4/exec" method="POST">
-    , {
+    // Your Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyAQ2KIZqstgHTjKBEuI_tXOIKMHRhmp9cf0No-SbzNxQ6FvTOWjV7x-bXkTlo3-6r4/exec" method="POST"'>
+                    ; // <-- REPLACE WITH YOUR URL
+    
+    // Use fetch with mode 'cors' (not 'no-cors') to read response
+    fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors',  // This bypasses CORS, but you won't get a response
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams(data)
     })
-    .then(() => {
-        // Show success message
-        document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('successMessage').innerHTML = 'Thank you! Check your email for the guide.';
-        this.reset();
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            // Show success message
+            messageDiv.style.display = 'block';
+            messageDiv.innerHTML = '<span style="color: var(--rich-brown);">✅ Thank you! Check your email for the guide.</span>';
+            form.reset();
+        } else {
+            throw new Error(data.message || 'Unknown error');
+        }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Something went wrong. Please try again.');
+        messageDiv.style.display = 'block';
+        messageDiv.innerHTML = '<span style="color: #d9534f;">❌ Something went wrong. Please try again or contact support.</span>';
+    })
+    .finally(() => {
+        // Reset button
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').textContent = 'Subscribe';
     });
 });
       </script>
@@ -978,4 +1004,5 @@
 </body>
 
 </html>
+
 
