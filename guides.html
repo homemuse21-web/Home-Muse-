@@ -840,6 +840,37 @@
             </div>
         </div>
     </section>
+      <script>
+    document.getElementById('guideForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email')
+    };
+    
+    fetch('https://script.google.com/macros/s/AKfycbyAQ2KIZqstgHTjKBEuI_tXOIKMHRhmp9cf0No-SbzNxQ6FvTOWjV7x-bXkTlo3-6r4/exec" method="POST">
+    , {
+        method: 'POST',
+        mode: 'no-cors',  // This bypasses CORS, but you won't get a response
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data)
+    })
+    .then(() => {
+        // Show success message
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('successMessage').innerHTML = 'Thank you! Check your email for the guide.';
+        this.reset();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+    });
+});
+      </script>
 
     <!-- All Guides Section -->
     <section class="all-guides">
@@ -947,3 +978,4 @@
 </body>
 
 </html>
+
